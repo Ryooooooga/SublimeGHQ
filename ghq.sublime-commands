@@ -1,6 +1,6 @@
 [
-	{
-		"command": "ghq_open_repository",
-		"caption": "GHQ: Open Repository..."
-	}
+    {
+        "command": "ghq_open_repository",
+        "caption": "GHQ: Open Repository..."
+    }
 ]
