@@ -1,3 +1,4 @@
+import os
 import sublime
 import sublime_plugin
 import subprocess
@@ -8,6 +9,21 @@ def get_ghq_repositories():
 
     stdout = subprocess.check_output([ghq_command, 'list', '--full-path'])
     repos = stdout.decode().rstrip('\n').split('\n')
+
+    stdout = subprocess.check_output([ghq_command, 'root', '--all'])
+    roots = stdout.decode().rstrip('\n').split('\n')
+    roots.sort(reverse=True)
+
+    home = os.path.join(os.path.expanduser('~'), '')
+    def form_repo(path, roots):
+        upath = os.path.join('~', os.path.relpath(path, home)) if path.startswith(home) else path
+
+        for root in roots:
+            if path.startswith(os.path.join(root, '')):
+                return [os.path.relpath(path, root), upath]
+        return [upath, upath]
+
+    repos = [form_repo(path, roots) for path in repos]
     return repos
 
 
@@ -25,7 +41,8 @@ class GhqOpenRepositoryCommand(sublime_plugin.WindowCommand):
 
             def on_repository_selected(index):
                 if index >= 0:
-                    open_repository(self.window, repositories[index])
+                    [alias, path] =  repositories[index]
+                    open_repository(self.window, os.path.expanduser(path))
 
             self.window.show_quick_panel(repositories, on_repository_selected)
 
