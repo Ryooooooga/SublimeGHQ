@@ -29,6 +29,7 @@ def get_ghq_repositories():
 
 def open_repository(window, repository_path):
     window.run_command('close_all')
+    window.run_command('close_workspace')
 
     folders = [{ 'path': repository_path }]
     window.set_project_data({ 'folders': folders })
