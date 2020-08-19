@@ -27,9 +27,20 @@ def get_ghq_repositories():
     return repos
 
 
-def open_repository(window, repository_path):
+def close_all_views(window):
     window.run_command('close_all')
+    return len(window.views()) == 0
+
+
+def close_workspace(window):
     window.run_command('close_workspace')
+
+
+def open_repository(window, repository_path):
+    if not close_all_views(window):
+        return
+
+    close_workspace(window)
 
     folders = [{ 'path': repository_path }]
     window.set_project_data({ 'folders': folders })
